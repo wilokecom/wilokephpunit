@@ -1,0 +1,50 @@
+version: 2.0
+references:
+  container_config: &container_config
+    docker:
+      - image: circleci/php:7.2
+    working_directory: ~/wiloke
+    workspace_root: &workspace_root
+                    /tmp
+  copy_vendor: &copy_vendor
+    run:
+      name: Copy vendor directory
+      command: cp -R /tmp/vendor .
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+  phpunit_job: &phpunit_job
+    <<: *container_config
+    steps:
+      - checkout
+      - *attach_workspace
+      - *copy_vendor
+      - run:
+          name: Run PHP unit tests
+          command: vendor/bin/phpunit
+jobs:
+  build:
+    <<: *container_config
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: composer install -n -o
+      - run:
+          name: Install WordPress
+          command: bash .circleci/install-wp.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+  test_php72:
+    <<: *phpunit_job
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build
+      - test_php72:
+          requires:
+            - build
+            - code_quality
