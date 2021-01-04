@@ -31,8 +31,8 @@ jobs:
           name: Install dependencies
           command: composer install -n -o
       - run:
-          name: Install WordPress
-          command: bash .circleci/install-wp.sh
+          name: Install Auto-load
+          command: composer dump-autoload
       - persist_to_workspace:
           root: .
           paths:
