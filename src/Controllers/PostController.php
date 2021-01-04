@@ -6,6 +6,8 @@ namespace WilokeUnit\Controllers;
 
 class PostController
 {
+	protected $aData;
+
 	public function validation(array $aData)
 	{
 		if (!isset($aData['title']) || empty($aData['title'])) {
@@ -22,9 +24,16 @@ class PostController
 			];
 		}
 
+		$this->aData = $aData;
+
 		return [
 			'success' => true,
-			'msg'     => 'The data have been validated'
+			'data'    => $aData
 		];
+	}
+
+	public function post()
+	{
+		return 1;
 	}
 }
