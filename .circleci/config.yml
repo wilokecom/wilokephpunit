@@ -47,4 +47,3 @@ workflows:
       - test_php72:
           requires:
             - build
-            - code_quality
